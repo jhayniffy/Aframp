@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowUp, ArrowDown, ArrowLeftRight, Clock, CheckCircle2, XCircle } from 'lucide-react'
+import { ArrowUp, ArrowDown, ArrowLeftRight, Clock, CheckCircle2, XCircle, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ExportModal } from './export-modal'
 
 interface Transaction {
   id: string
@@ -54,6 +56,8 @@ const mockTransactions: Transaction[] = [
 ]
 
 export function TransactionHistory() {
+  const [exportModalOpen, setExportModalOpen] = useState(false)
+
   const getIcon = (type: Transaction['type']) => {
     switch (type) {
       case 'send':
@@ -77,13 +81,23 @@ export function TransactionHistory() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-card rounded-2xl p-6 border border-border shadow-sm"
-    >
-      <h3 className="text-lg font-semibold text-foreground mb-4">Recent Transactions</h3>
-      <div className="space-y-3">
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-card rounded-2xl p-6 border border-border shadow-sm"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-foreground">Recent Transactions</h3>
+          <button
+            onClick={() => setExportModalOpen(true)}
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary hover:text-primary/80 hover:bg-primary/10 rounded-lg transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Export
+          </button>
+        </div>
+        <div className="space-y-3">
         {mockTransactions.map((tx, index) => (
           <motion.div
             key={tx.id}
@@ -132,5 +146,12 @@ export function TransactionHistory() {
         View All Transactions
       </button>
     </motion.div>
+
+    <ExportModal 
+      open={exportModalOpen} 
+      onOpenChange={setExportModalOpen}
+      transactions={mockTransactions}
+    />
+  </>
   )
 }
